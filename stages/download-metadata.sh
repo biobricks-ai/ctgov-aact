@@ -6,7 +6,7 @@ set -eo pipefail
 localpath=$(pwd)
 echo "Local path: $localpath"
 
-metadatapath="$localpath/metadata"
+metadatapath="$localpath/metadata/doc"
 echo "Metadata path: $metadatapath"
 mkdir -p $metadatapath
 
