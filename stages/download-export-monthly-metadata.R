@@ -1,6 +1,7 @@
 library(dplyr)
 library(fs)
 library(glue)
+library(lubridate)
 library(purrr)
 library(readr)
 library(rvest)
@@ -163,14 +164,34 @@ process_type <- function(type) {
   # Create output directory
   output_dir <- fs::dir_create(fs::path("metadata/export-monthly", type))
 
+  # Get current year and month to filter out current month's entry
+  current_date <- Sys.Date()
+  current_year <- year(current_date)
+  current_month <- month(current_date)
+
   # Fetch and save metadata for each year
   years_to_fetch |> walk(function(year) {
     archives <- get_monthly_archives(type, year)
 
     if (nrow(archives) > 0) {
-      output_file <- fs::path(output_dir, paste0(year, ".tsv"))
-      print(paste("Writing", nrow(archives), "archives to", output_file))
-      write_tsv(archives, output_file)
+      # Parse date column and filter out current month
+      # Date format is MM-DD-YYYY
+      archives <- archives |>
+        mutate(
+          parsed_date = mdy(date),
+          archive_year = year(parsed_date),
+          archive_month = month(parsed_date)
+        ) |>
+        filter(!(archive_year == current_year & archive_month == current_month)) |>
+        select(-parsed_date, -archive_year, -archive_month)
+
+      if (nrow(archives) > 0) {
+        output_file <- fs::path(output_dir, paste0(year, ".tsv"))
+        print(paste("Writing", nrow(archives), "archives to", output_file))
+        write_tsv(archives, output_file)
+      } else {
+        print(paste("No archives found for", type, year, "(after filtering current month)"))
+      }
     } else {
       print(paste("No archives found for", type, year))
     }

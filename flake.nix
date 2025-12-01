@@ -20,7 +20,7 @@
 	    in {
             buildInputs = oldAttrs.buildInputs ++ [
               perlDeps
-	      (with rPackages; [ arrow dplyr fs glue purrr readr rvest stringr vroom ])
+	      (with rPackages; [ arrow dplyr fs glue lubridate purrr readr rvest stringr vroom ])
             ];
           });
       });
