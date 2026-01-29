@@ -11,15 +11,8 @@
     flake-utils.lib.eachDefaultSystem (system:
       with import nixpkgs { inherit system; }; {
         devShells.default = dev-shell.devShells.${system}.default.overrideAttrs
-          (oldAttrs:
-            let
-              perlDeps =
-                with perlPackages; [
-                  HTMLParser
-                ];
-	    in {
+          (oldAttrs: {
             buildInputs = oldAttrs.buildInputs ++ [
-              perlDeps
 	      (with rPackages; [ arrow dplyr fs glue lubridate purrr readr rvest stringr vroom ])
             ];
           });
