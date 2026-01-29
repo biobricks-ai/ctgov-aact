@@ -6,7 +6,7 @@ library(stringr)
 options(timeout=1800) # download timeout
 
 # read html from page and grab file to download
-page   <- read_html("https://aact.ctti-clinicaltrials.org/pipe_files")
+page   <- read_html("https://aact.ctti-clinicaltrials.org/downloads/snapshots?type=flatfiles")
 nodes  <- page |> html_nodes("a")
 recent <- detect(nodes, ~ grepl("*.zip", . |> html_text() ))
 
