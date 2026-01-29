@@ -3,6 +3,7 @@ stages:
     cmd: Rscript stages/download-export-monthly-metadata.R
     deps:
       - stages/download-export-monthly-metadata.R
+      - stages/lib/download_meta.R
     outs:
       - metadata/export-monthly/flatfiles/:
           persist: false # true
