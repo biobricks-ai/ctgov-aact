@@ -13,6 +13,7 @@ stages:
     cmd: Rscript stages/download.R
     deps:
       - stages/download.R
+      - stages/lib/download_meta.R
       - "https://aact.ctti-clinicaltrials.org/downloads/snapshots?type=flatfiles"
     outs:
       - download/
