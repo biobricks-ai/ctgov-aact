@@ -20,7 +20,7 @@ stages:
     deps:
     - stages/download-metadata.sh
     outs:
-    - metadata/doc/
+      - metadata/doc/definitions.xlsx
   build:
     cmd: Rscript stages/build.R
     deps:

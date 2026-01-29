@@ -11,6 +11,5 @@ echo "Metadata path: $metadatapath"
 mkdir -p $metadatapath
 
 # From <https://aact.ctti-clinicaltrials.org/schema>
-wget -qO - 'https://aact.ctti-clinicaltrials.org/definitions.csv' \
-	| perl -MHTML::Entities -lpE '$_ = decode_entities($_)' \
-	| sponge $metadatapath/definitions.csv
+# It is really an Excel file.
+wget -qO $metadatapath/definitions.xlsx 'https://aact.ctti-clinicaltrials.org/definitions.csv'
