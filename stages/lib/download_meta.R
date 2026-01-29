@@ -31,29 +31,12 @@ get_latest_year <- function(type) {
   max(years)
 }
 
-# Get monthly archives metadata for a specific type and year
-get_monthly_archives <- function(type, year) {
-  url <- paste0("https://aact.ctti-clinicaltrials.org/downloads/snapshots?type=", type, "&year=", year)
-
-  print(paste("Fetching", type, "archives for year", year))
-
-  page <- read_html(url)
-
-  # Find the "Monthly Archives" table
-  tables <- ( page
-             |> html_nodes(xpath = r'{//div[contains(@class, "snapshots-section")
-                 and contains(., "Monthly Archives")]
-                 //div[contains(@class, "snapshots-grid-table")]
-                }') )
-
-  if (length(tables) != 1) {
-    warning(paste("No monthly archives table found for", type, year))
+extract_data_from_html_table <- function(html_table) {
+  if(is.null(html_table)) {
     return(tibble(date = character(), filename = character(), url = character()))
   }
 
-  # Get the monthly archives table
-  monthly_table <- tables[[1]]
-  rows <- ( monthly_table
+  rows <- ( html_table
            |> html_nodes(xpath = r'{.//div[
                            contains(@class, "snapshots-grid-row")
                            and not(contains(@class, "snapshots-grid-header"))
@@ -89,6 +72,33 @@ get_monthly_archives <- function(type, year) {
   })
 
   archives
+}
+
+# Get monthly archives metadata for a specific type and year
+get_monthly_archives <- function(type, year) {
+  url <- paste0("https://aact.ctti-clinicaltrials.org/downloads/snapshots?type=", type, "&year=", year)
+
+  print(paste("Fetching", type, "archives for year", year))
+
+  page <- read_html(url)
+
+  # Find the "Monthly Archives" table
+  tables <- ( page
+             |> html_nodes(xpath = r'{//div[contains(@class, "snapshots-section")
+                 and contains(., "Monthly Archives")]
+                 //div[contains(@class, "snapshots-grid-table")]
+                }') )
+
+  if (length(tables) != 1) {
+    warning(paste("No monthly archives table found for", type, year))
+    return(extract_data_from_html_table(NULL))
+  }
+
+  # Get the monthly archives table
+  monthly_table <- tables[[1]]
+  archives <- extract_data_from_html_table(monthly_table)
+
+  return(archives)
 }
 
 # Get years that already have metadata files
