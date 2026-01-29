@@ -1,18 +1,17 @@
-library(rvest)
-library(purrr)
-library(fs)
-library(stringr)
-
 options(timeout=1800) # download timeout
 
-# read html from page and grab file to download
-page   <- read_html("https://aact.ctti-clinicaltrials.org/pipe_files")
-nodes  <- page |> html_nodes("a")
-recent <- detect(nodes, ~ grepl("*.zip", . |> html_text() ))
+source('stages/lib/download_meta.R')
+
+# read find daily archive file to download
+daily_archives <- get_daily_archives_from_page('flatfiles')
+latest_row <- ( daily_archives
+  |> arrange(mdy(date))
+  |> tail(1)
+)
 
 # download file to download directory
-name     <- recent |> html_text() |> stringr::str_trim()
+name     <- latest_row$file[[1]]
 download <- fs::dir_create("download") |> fs::path(name)
-url      <- recent |> html_attr("href")
+url      <- latest_row$url[[1]]
 print(paste("Downloading", url, "to", download))
 download.file(url,download)

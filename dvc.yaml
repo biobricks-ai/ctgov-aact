@@ -1,22 +1,33 @@
 stages:
+  download-export-monthly-metadata:
+    cmd: Rscript stages/download-export-monthly-metadata.R
+    deps:
+      - stages/download-export-monthly-metadata.R
+      - stages/lib/download_meta.R
+    outs:
+      - metadata/export-monthly/flatfiles/:
+          persist: false # true
+      - metadata/export-monthly/pgdump/:
+          persist: false # true
   download:
     cmd: Rscript stages/download.R
     deps:
-    - stages/download.R
-    - "https://aact.ctti-clinicaltrials.org/pipe_files"
+      - stages/download.R
+      - stages/lib/download_meta.R
+      - "https://aact.ctti-clinicaltrials.org/downloads/snapshots?type=flatfiles"
     outs:
-    - download/
+      - download/
   download-metadata:
     cmd: stages/download-metadata.sh
     deps:
-    - stages/download-metadata.sh
+      - stages/download-metadata.sh
     outs:
-    - metadata/
+      - metadata/doc/definitions.xlsx
   build:
     cmd: Rscript stages/build.R
     deps:
-    - stages/build.R
-    - download/
-    - metadata/
+      - stages/build.R
+      - download/
+      - metadata/
     outs:
-    - brick/
+      - brick/
