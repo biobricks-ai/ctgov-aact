@@ -12,7 +12,7 @@ get_latest_year <- function(type) {
   url <- glue("https://aact.ctti-clinicaltrials.org/downloads/snapshots?type={type}")
   page <- read_html(url)
 
-  # Find the "Monthly Archives" table
+  # Find the "year nav" div
   div.year_nav <- ( page
                    |> html_nodes(xpath = r'{//div[contains(@class, "year-navigation")]}') )
 
