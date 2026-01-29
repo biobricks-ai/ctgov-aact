@@ -101,6 +101,32 @@ get_monthly_archives <- function(type, year) {
   return(archives)
 }
 
+get_daily_archives_from_page <- function(type, page = 1) {
+  url <- paste0("https://aact.ctti-clinicaltrials.org/downloads/snapshots?type=", type, "&page=", page)
+
+  print(paste("Fetching", type, "daily archives on page", page))
+
+  page <- read_html(url)
+
+  # Find the "Recent Daily Snapshots" table
+  tables <- ( page
+             |> html_nodes(xpath = r'{//div[contains(@class, "snapshots-section")
+                 and contains(., "Recent Daily Snapshots")]
+                 //div[contains(@class, "snapshots-grid-table")]
+                }') )
+
+  if (length(tables) != 1) {
+    warning(paste("No daily archives table found for", type, page))
+    return(extract_data_from_html_table(NULL))
+  }
+
+  # Get the daily archives table
+  daily_table <- tables[[1]]
+  archives <- extract_data_from_html_table(daily_table)
+
+  return(archives)
+}
+
 # Get years that already have metadata files
 get_existing_years <- function(type) {
   metadata_dir <- fs::path("metadata/export-monthly", type)
