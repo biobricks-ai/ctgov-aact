@@ -11,21 +11,21 @@ stages:
   download:
     cmd: Rscript stages/download.R
     deps:
-    - stages/download.R
-    - "https://aact.ctti-clinicaltrials.org/pipe_files"
+      - stages/download.R
+      - "https://aact.ctti-clinicaltrials.org/pipe_files"
     outs:
-    - download/
+      - download/
   download-metadata:
     cmd: stages/download-metadata.sh
     deps:
-    - stages/download-metadata.sh
+      - stages/download-metadata.sh
     outs:
       - metadata/doc/definitions.xlsx
   build:
     cmd: Rscript stages/build.R
     deps:
-    - stages/build.R
-    - download/
-    - metadata/
+      - stages/build.R
+      - download/
+      - metadata/
     outs:
-    - brick/
+      - brick/
