@@ -13,5 +13,5 @@ latest_row <- ( daily_archives
 name     <- latest_row$file[[1]]
 download <- fs::dir_create("download") |> fs::path(name)
 url      <- latest_row$url[[1]]
-print(paste("Downloading", url, "to", download))
+message(paste("Downloading", url, "to", download))
 download.file(url,download)
