@@ -78,7 +78,7 @@ extract_data_from_html_table <- function(html_table) {
 get_monthly_archives <- function(type, year) {
   url <- paste0("https://aact.ctti-clinicaltrials.org/downloads/snapshots?type=", type, "&year=", year)
 
-  print(paste("Fetching", type, "archives for year", year))
+  message(paste("Fetching", type, "archives for year", year))
 
   page <- read_html(url)
 
@@ -104,7 +104,7 @@ get_monthly_archives <- function(type, year) {
 get_daily_archives_from_page <- function(type, page = 1) {
   url <- paste0("https://aact.ctti-clinicaltrials.org/downloads/snapshots?type=", type, "&page=", page)
 
-  print(paste("Fetching", type, "daily archives on page", page))
+  message(paste("Fetching", type, "daily archives on page", page))
 
   page <- read_html(url)
 
@@ -177,25 +177,25 @@ determine_years_to_fetch <- function(existing_years, latest_year) {
 
 # Process a single type (pgdump or flatfiles)
 process_type <- function(type) {
-  print(paste("Processing type:", type))
+  message(paste("Processing type:", type))
 
   # Get latest year available
   latest_year <- get_latest_year(type)
-  print(paste("Latest year available:", latest_year))
+  message(paste("Latest year available:", latest_year))
 
   # Get existing years
   existing_years <- get_existing_years(type)
-  print(paste("Existing years:", paste(existing_years, collapse = ", ")))
+  message(paste("Existing years:", paste(existing_years, collapse = ", ")))
 
   # Determine which years to fetch
   years_to_fetch <- determine_years_to_fetch(existing_years, latest_year)
 
   if (length(years_to_fetch) == 0) {
-    print(paste("No years to fetch for", type))
+    message(paste("No years to fetch for", type))
     return()
   }
 
-  print(paste("Years to fetch:", paste(years_to_fetch, collapse = ", ")))
+  message(paste("Years to fetch:", paste(years_to_fetch, collapse = ", ")))
 
   # Create output directory
   output_dir <- fs::dir_create(fs::path("metadata/export-monthly", type))
@@ -223,13 +223,13 @@ process_type <- function(type) {
 
       if (nrow(archives) > 0) {
         output_file <- fs::path(output_dir, paste0(year, ".tsv"))
-        print(paste("Writing", nrow(archives), "archives to", output_file))
+        message(paste("Writing", nrow(archives), "archives to", output_file))
         write_tsv(archives, output_file)
       } else {
-        print(paste("No archives found for", type, year, "(after filtering current month)"))
+        message(paste("No archives found for", type, year, "(after filtering current month)"))
       }
     } else {
-      print(paste("No archives found for", type, year))
+      message(paste("No archives found for", type, year))
     }
   })
 }
